@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -18,12 +19,20 @@ use App\Http\Controllers\UserController;
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['auth:api', 'role:librarian'])->group(function () {
+Route::middleware(['auth:api', 'role:librarian'])->prefix('admin')->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/users', 'index');
         Route::get('/users/{id}', 'show');
         Route::post('/users', 'store');
         Route::put('/users/{id}', 'update');
         Route::delete('/users/{id}', 'destroy');
+    });
+
+    Route::controller(BookController::class)->group(function () {
+        Route::get('/books', 'index');
+        Route::get('/books/{id}', 'show');
+        Route::post('/books', 'store');
+        Route::put('/books/{id}', 'update');
+        Route::delete('/books/{id}', 'destroy');
     });
 });
