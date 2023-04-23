@@ -9,12 +9,18 @@ class Book extends Model
 {
     use HasFactory;
 
+    public function checkouts()
+    {
+        return $this->hasMany(BookCheckout::class, 'book_id');
+    }
+
     protected $fillable = [
         'title',
         'year',
         'published',
         'author_id',
-        'genre_id'
+        'genre_id',
+        'base_stock'
     ];
 
     public static function filters()

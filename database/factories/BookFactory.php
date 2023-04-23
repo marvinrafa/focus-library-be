@@ -26,7 +26,8 @@ class BookFactory extends Factory
             'year' => fake()->year(),
             'published' => fake()->boolean(),
             'author_id' => Author::all()->random()->id,
-            'genre_id' => Genre::all()->random()->id
+            'genre_id' => Genre::all()->random()->id,
+            'base_stock' => fake()->numberBetween(1, 3)
         ];
     }
 }

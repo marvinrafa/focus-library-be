@@ -45,8 +45,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function setPasswordAttribute($value) {
+    public function setPasswordAttribute($value)
+    {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'book_checkouts', 'user_id', 'book_id')->withTimestamps();
+    }
+
+    public function activeBooks()
+    {
+        return $this
+            ->belongsToMany(Book::class, 'book_checkouts', 'user_id', 'book_id')
+            ->wherePivot('active', '=', true);
+    }
+
+    public function bookCheckouts()
+    {
+        return $this->hasMany(BookCheckout::class, 'user_id');
     }
 
     // FILTER SECTION 
@@ -54,6 +72,7 @@ class User extends Authenticatable
     public static function filters()
     {
         return [
+
             [
                 "type" => "text",
                 "name" => "first_name",

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookCheckoutController;
 use App\Http\Controllers\BookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Models\BookCheckout;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,5 +36,17 @@ Route::middleware(['auth:api', 'role:librarian'])->prefix('admin')->group(functi
         Route::post('/books', 'store');
         Route::put('/books/{id}', 'update');
         Route::delete('/books/{id}', 'destroy');
+    });
+    
+    Route::controller(BookCheckoutController::class)->group(function () {
+        Route::put('/checkouts/{checkout_id}/finish', 'finishCheckout');
+
+    });
+});
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::controller(BookCheckoutController::class)->group(function () {
+        Route::post('/books/{id}/checkout', 'checkoutBook');
+        Route::get('/checkouts', 'checkoutHistory');
     });
 });

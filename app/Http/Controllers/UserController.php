@@ -47,7 +47,10 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with([
+            'bookCheckouts:id,active,book_id,user_id',
+            'bookCheckouts.book:id,title'
+        ])->findOrFail($id);
 
         return response()->json(['user' => $user], 200);
     }
