@@ -19,6 +19,6 @@ class EnsureUserHasRole
             return $next($request);
         }
         
-        return $next($request);
+        return response()->json(['message' => "Not allowed to perform this action"], 403);
     }
 }

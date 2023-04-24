@@ -31,6 +31,7 @@ class BookRequest extends FormRequest
             'published' => $sometimes . 'required|boolean',
             'author_id' => $sometimes . 'required|exists:authors,id',
             'genre_id' => $sometimes . 'required|exists:genres,id',
+            'base_stock' => $sometimes . 'required|integer',
         ];
     }
 }

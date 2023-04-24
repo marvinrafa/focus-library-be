@@ -25,7 +25,7 @@ class BookCheckoutController extends Controller
 
         $user->books()->attach([$id]);
 
-        return response()->json(['message' => 'Success'], 201);
+        return response()->json(['message' => 'Success'], 200);
     }
 
     public function checkoutHistory()
@@ -33,9 +33,9 @@ class BookCheckoutController extends Controller
         /** @var \App\Models\User $user **/
         $user = Auth::user();
 
-        $book_checkouts = $user->bookCheckouts()->with('book:id,title')->get();
+        $book_checkouts = $user->bookCheckouts()->orderBy('active', 'desc')->with('book:id,title')->paginate(10);
 
-        return response()->json(['history' => $book_checkouts], 201);
+        return response()->json(['checkouts' => $book_checkouts], 200);
     }
 
     public function finishCheckout($checkout_id)
@@ -47,6 +47,6 @@ class BookCheckoutController extends Controller
         $book_checkout->active = false;
         $book_checkout->save();
 
-        return response()->json(['message' => 'Success'], 201);
+        return response()->json(['message' => 'Success'], 200);
     }
 }

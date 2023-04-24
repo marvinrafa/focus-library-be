@@ -2,22 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BookRequest;
 use App\Models\Book;
+use App\Models\Genre;
+use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Requests\BookRequest;
 use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class BookController extends Controller
 {
-        /**
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $filters = Book::filters();
         $users = QueryBuilder::for(Book::class)
-            ->select('id', 'title', 'published')
-            ->allowedFilters(getAllowedFilters($filters))
+            ->select('id', 'title', 'published', 'year')
+            ->allowedFilters([
+                ...getAllowedFilters($filters),
+                AllowedFilter::scope('published'),
+                AllowedFilter::scope('author_id'),
+                AllowedFilter::scope('genre_id'),
+                AllowedFilter::scope('search')
+            ])
             ->paginate(10);
 
         $filters = collect(['filters' => $filters]);
@@ -43,7 +52,7 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        $book = Book::findOrFail($id);
+        $book = Book::withCount('activeCheckouts')->with('author:id,name', 'genre:id,name')->findOrFail($id);
 
         return response()->json(['book' => $book], 200);
     }
@@ -69,5 +78,17 @@ class BookController extends Controller
         $book->delete();
 
         return response()->json(['message' => 'Book deleted'], 200);
+    }
+
+    public function listAuthors()
+    {
+        $authors = getList(Author::all(), 'name');
+        return response(['authors' => $authors], 200);
+    }
+
+    public function listGenres()
+    {
+        $generes = getList(Genre::all(), 'name');
+        return response(['genres' => $generes], 200);
     }
 }

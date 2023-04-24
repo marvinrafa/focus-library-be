@@ -36,11 +36,12 @@ Route::middleware(['auth:api', 'role:librarian'])->prefix('admin')->group(functi
         Route::post('/books', 'store');
         Route::put('/books/{id}', 'update');
         Route::delete('/books/{id}', 'destroy');
+        Route::get('/authors/list', 'listAuthors');
+        Route::get('/genres/list', 'listGenres');
     });
     
     Route::controller(BookCheckoutController::class)->group(function () {
         Route::put('/checkouts/{checkout_id}/finish', 'finishCheckout');
-
     });
 });
 
@@ -48,5 +49,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::controller(BookCheckoutController::class)->group(function () {
         Route::post('/books/{id}/checkout', 'checkoutBook');
         Route::get('/checkouts', 'checkoutHistory');
+    });
+    Route::get('profile', [AuthController::class, 'getProfile']);
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::controller(BookController::class)->group(function () {
+        Route::get('/books', 'index');
+        Route::get('/books/{id}', 'show');
     });
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -22,5 +23,19 @@ class AuthController extends Controller
         } else {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-    }   
+    }
+
+    public function getProfile(Request $request)
+    {
+        $user = Auth::user();
+        info($user);
+        return response()->json(['user' => $user], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        /** @var \App\Models\User $user **/
+        $user = Auth::user()->token();
+        $user->revoke();
+    }
 }
